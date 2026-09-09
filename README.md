@@ -71,6 +71,8 @@ The first gold marts live in `transform/models/marts/` and include `fct_shipment
 
 Aggregate marts provide dashboard-ready SLA performance by day and quality issue rates by weekly operational segment.
 
+Full Day 3 `dbt build --profiles-dir .` and `dbt docs generate --profiles-dir .` passed from `transform/`.
+
 ## Data Note
 
 Olist data will be used as the real source dataset. Warehouse, carrier, SLA, and issue fields will be synthetic additions created later for the fulfillment operations use case.
