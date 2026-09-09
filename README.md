@@ -87,6 +87,12 @@ Run `python scripts/export_tableau_datasets.py` to create curated CSV exports in
 
 Tableau Public build instructions are documented in `dashboard/tableau_build_guide.md`.
 
+## Dashboard Screenshots
+
+- [Executive Summary](dashboard/screenshots/executive_summary.png)
+- [Ops Drill-down](dashboard/screenshots/ops_drilldown.png)
+- [Root-cause Anomaly View](dashboard/screenshots/root_cause_anomaly.png)
+
 ## Data Note
 
 Olist data will be used as the real source dataset. Warehouse, carrier, SLA, and issue fields will be synthetic additions created later for the fulfillment operations use case.
