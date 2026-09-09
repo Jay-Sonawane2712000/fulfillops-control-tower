@@ -25,6 +25,11 @@ ENV/
 ~$*.twb
 *.tmp
 
+# dbt generated artifacts
+transform/target/
+transform/dbt_packages/
+transform/logs/
+
 # Large raw data files
 raw/**/*.csv
 raw/**/*.csv.gz
