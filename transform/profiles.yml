@@ -1,0 +1,7 @@
+fulfillops_transform:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: ../warehouse/fulfillops.duckdb
+      threads: 4

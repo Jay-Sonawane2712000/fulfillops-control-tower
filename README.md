@@ -49,6 +49,16 @@ Run `python scripts/generate_synthetic_ops.py` after the real Olist CSVs and syn
 
 Run `python scripts/load_bronze_duckdb.py` to create `warehouse/fulfillops.duckdb` and load the real Olist CSVs plus generated synthetic operational CSVs into bronze tables. This step preserves the raw CSV field names and does not create silver, gold, or dbt models yet.
 
+## dbt Transform Setup
+
+Run dbt commands from `transform/` with the local profile:
+
+```text
+dbt debug --profiles-dir .
+```
+
+The dbt project `fulfillops_transform` connects to `../warehouse/fulfillops.duckdb` and defines bronze sources for the real Olist and generated synthetic operational tables. Staging and mart folders are prepared, but silver and gold models are not created yet.
+
 ## Data Note
 
 Olist data will be used as the real source dataset. Warehouse, carrier, SLA, and issue fields will be synthetic additions created later for the fulfillment operations use case.

@@ -1,0 +1,32 @@
+version: 2
+
+sources:
+  - name: bronze
+    database: fulfillops
+    schema: main
+    description: Bronze tables loaded from real Olist CSVs and generated synthetic operational CSVs.
+    tables:
+      - name: raw_orders
+        description: Real Olist orders source table.
+      - name: raw_order_items
+        description: Real Olist order items source table.
+      - name: raw_products
+        description: Real Olist products source table.
+      - name: raw_customers
+        description: Real Olist customers source table.
+      - name: raw_reviews
+        description: Real Olist order reviews source table.
+      - name: raw_payments
+        description: Real Olist order payments source table.
+      - name: raw_sellers
+        description: Real Olist sellers source table.
+      - name: raw_geolocation
+        description: Real Olist geolocation source table.
+      - name: raw_warehouse_assignments
+        description: Synthetic warehouse assignment source table.
+      - name: raw_carrier_assignments
+        description: Synthetic carrier assignment source table.
+      - name: raw_sla_targets
+        description: Synthetic order SLA target source table.
+      - name: raw_issue_flags
+        description: Synthetic issue flag source table.
