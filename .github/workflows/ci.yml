@@ -1,0 +1,77 @@
+name: FulfillOps CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  dbt-duckdb:
+    name: dbt DuckDB workflow
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Validate synthetic config
+        run: python scripts/validate_synthetic_config.py
+
+      - name: Check for raw Olist CSVs
+        id: raw_olist
+        shell: bash
+        run: |
+          if [ -f raw/olist/olist_orders_dataset.csv ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+            echo "Raw Olist CSVs are available; running full local rebuild checks."
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "Raw Olist CSVs are not committed; skipping full rebuild/dbt/anomaly checks."
+          fi
+
+      - name: Validate raw Olist files
+        if: steps.raw_olist.outputs.available == 'true'
+        run: python scripts/validate_raw_olist.py
+
+      - name: Regenerate synthetic operational outputs
+        if: steps.raw_olist.outputs.available == 'true'
+        run: python scripts/generate_synthetic_ops.py
+
+      - name: Load bronze DuckDB tables
+        if: steps.raw_olist.outputs.available == 'true'
+        run: python scripts/load_bronze_duckdb.py
+
+      - name: Validate synthetic outputs
+        if: steps.raw_olist.outputs.available == 'true'
+        run: python scripts/validate_synthetic_outputs.py
+
+      - name: Validate bronze DuckDB
+        if: steps.raw_olist.outputs.available == 'true'
+        run: python scripts/validate_bronze_duckdb.py
+
+      - name: dbt debug
+        if: steps.raw_olist.outputs.available == 'true'
+        working-directory: transform
+        run: dbt debug --profiles-dir .
+
+      - name: dbt build
+        if: steps.raw_olist.outputs.available == 'true'
+        working-directory: transform
+        run: dbt build --profiles-dir .
+
+      - name: Detect anomalies
+        if: steps.raw_olist.outputs.available == 'true'
+        run: python scripts/detect_anomalies.py
+
+      - name: Validate anomaly detection
+        if: steps.raw_olist.outputs.available == 'true'
+        run: python scripts/validate_anomaly_detection.py

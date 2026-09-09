@@ -93,6 +93,10 @@ Tableau Public build instructions are documented in `dashboard/tableau_build_gui
 - [Ops Drill-down](dashboard/screenshots/ops_drilldown.png)
 - [Root-cause Anomaly View](dashboard/screenshots/root_cause_anomaly.png)
 
+## Continuous Integration
+
+GitHub Actions runs Python dependency installation and the committed synthetic config check on push and pull request. Because raw Olist CSVs and DuckDB database files are intentionally not committed, the full local rebuild, dbt build, and anomaly validation steps run in CI only when the Kaggle Olist CSVs are present in `raw/olist/`; full local rebuilds require placing those Kaggle files there first.
+
 ## Data Note
 
 Olist data will be used as the real source dataset. Warehouse, carrier, SLA, and issue fields will be synthetic additions created later for the fulfillment operations use case.
