@@ -66,3 +66,73 @@ models:
         tests:
           - not_null
           - unique
+
+  - name: agg_daily_sla_performance
+    description: Daily SLA performance aggregate by purchase date, warehouse, carrier, and SLA tier.
+    columns:
+      - name: order_purchase_date
+        description: Shipment purchase date grain key.
+        tests:
+          - not_null
+      - name: warehouse_id
+        description: Synthetic warehouse grain key.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_warehouse')
+                field: warehouse_id
+      - name: carrier_id
+        description: Synthetic carrier grain key.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_carrier')
+                field: carrier_id
+      - name: sla_tier
+        description: SLA tier grain key.
+        tests:
+          - not_null
+
+  - name: agg_weekly_quality_by_segment
+    description: Weekly quality issue aggregate by warehouse, carrier, category, and issue type.
+    columns:
+      - name: week_start_date
+        description: Week start date grain key based on order_purchase_date.
+        tests:
+          - not_null
+      - name: warehouse_id
+        description: Synthetic warehouse grain key.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_warehouse')
+                field: warehouse_id
+      - name: carrier_id
+        description: Synthetic carrier grain key.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_carrier')
+                field: carrier_id
+      - name: category_name
+        description: Product category grain key.
+        tests:
+          - not_null
+      - name: issue_type
+        description: Issue type grain key.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - none
+                  - missing
+                  - damaged
+                  - wrong
+                  - failed
+                  - cancelled
+                  - refund

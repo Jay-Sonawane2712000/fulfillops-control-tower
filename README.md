@@ -67,7 +67,9 @@ Day 2 staging includes dbt tests for uniqueness, relationships, accepted values,
 
 ## Day 3 Gold Marts
 
-The first gold marts live in `transform/models/marts/` and include `fct_shipments` plus warehouse, carrier, category, and date dimensions for dashboarding. These models keep one row per shipment/order in the fact table and do not add aggregate tables yet.
+The first gold marts live in `transform/models/marts/` and include `fct_shipments` plus warehouse, carrier, category, and date dimensions for dashboarding.
+
+Aggregate marts provide dashboard-ready SLA performance by day and quality issue rates by weekly operational segment.
 
 ## Data Note
 
