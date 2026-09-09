@@ -41,6 +41,10 @@ The files in `raw/synthetic/` define the planned synthetic operational layer: fu
 
 Known injected anomalies include a Carrier B x Southeast FC damaged-issue spike and a gradual SLA breach drift for one warehouse.
 
+## Generated Synthetic Outputs
+
+Run `python scripts/generate_synthetic_ops.py` after the real Olist CSVs and synthetic config files are present. The script creates order-level synthetic operational files in `raw/synthetic/generated/` for warehouse assignments, carrier assignments, issue flags, and SLA targets. These generated files augment real Olist orders without modifying the raw Olist source CSVs.
+
 ## Data Note
 
 Olist data will be used as the real source dataset. Warehouse, carrier, SLA, and issue fields will be synthetic additions created later for the fulfillment operations use case.
