@@ -1,0 +1,3 @@
+anomaly_id,anomaly_type,affected_carrier_id,affected_warehouse_id,issue_type,start_date,end_date,notes
+ANOM_SPIKE_001,sharp_spike,CAR_B,WH_SOUTHEAST,damaged,2018-04-01,2018-04-14,"Carrier B x Southeast FC damaged issue spike for a 2-week window."
+ANOM_DRIFT_001,gradual_drift,,WH_CENTRAL_WEST,sla_breach,2018-07-01,2018-07-28,"Central-West FC SLA breach rate increases across a 4-week window."

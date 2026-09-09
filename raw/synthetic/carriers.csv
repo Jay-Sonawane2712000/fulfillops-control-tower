@@ -1,0 +1,5 @@
+carrier_id,carrier_name,reliability_tier,performance_notes,warehouse_exception
+CAR_A,Carrier A,solid,"Consistent on-time baseline across warehouses.",
+CAR_B,Carrier B,solid,"Generally reliable, with a known injected damaged-issue spike window.",
+CAR_C,Carrier C,mediocre,"Higher baseline delay and breach risk than solid carriers.",
+CAR_D,Carrier D,warehouse_specific_poor,"Performs poorly only when assigned to Central-West FC.",WH_CENTRAL_WEST

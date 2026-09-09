@@ -1,0 +1,4 @@
+sla_tier,target_days,description
+fast,3,Priority small-parcel orders.
+standard,5,Default ecommerce fulfillment promise.
+bulky,8,Large or heavy-item fulfillment promise.

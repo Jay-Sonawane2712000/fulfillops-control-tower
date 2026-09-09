@@ -1,0 +1,5 @@
+warehouse_id,warehouse_name,assigned_states,region_rule_notes
+WH_NORTH,North FC,"AM;PA;RR;AP;RO;AC;TO","Routes North region states to North FC."
+WH_SOUTHEAST,Southeast FC,"SP;RJ;MG;ES","Routes Southeast region states to Southeast FC."
+WH_SOUTH,South FC,"PR;SC;RS","Routes South region states to South FC."
+WH_CENTRAL_WEST,Central-West FC,"DF;GO;MT;MS","Routes Central-West states to Central-West FC."

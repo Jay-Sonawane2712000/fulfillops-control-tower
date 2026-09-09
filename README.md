@@ -35,6 +35,12 @@ fulfillops-control-tower/
 
 Place the real Olist CSV files in `raw/olist/` before running ingestion checks. Synthetic warehouse, carrier, SLA, and issue fields will be generated later and should remain separate from the real Olist source data.
 
+## Synthetic Operations Config
+
+The files in `raw/synthetic/` define the planned synthetic operational layer: fulfillment centers, carriers, SLA targets, and known injected anomaly windows. These configs describe the synthetic layer only; order-level synthetic fields will be generated later on top of the real Olist source data.
+
+Known injected anomalies include a Carrier B x Southeast FC damaged-issue spike and a gradual SLA breach drift for one warehouse.
+
 ## Data Note
 
 Olist data will be used as the real source dataset. Warehouse, carrier, SLA, and issue fields will be synthetic additions created later for the fulfillment operations use case.
