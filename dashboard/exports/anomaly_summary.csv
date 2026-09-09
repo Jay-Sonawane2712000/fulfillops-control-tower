@@ -1,0 +1,3 @@
+anomaly_id,validation_metric,detected,first_detected_week,flagged_segment_weeks,top_flagged_segments
+ANOM_SPIKE_001,damaged_issue_rate,true,2018-03-26,3,WH_SOUTHEAST x CAR_B (z=2.71); WH_SOUTHEAST x CAR_B (z=2.65); WH_SOUTHEAST x CAR_B (z=2.17)
+ANOM_DRIFT_001,sla_breach_rate,true,2018-06-25,2,WH_CENTRAL_WEST x CAR_A (z=-3.53); WH_CENTRAL_WEST x CAR_D (z=-2.38)

@@ -81,6 +81,10 @@ The anomaly workflow now separates SLA-breach drift detection from damaged issue
 
 Headline finding: Carrier B x Southeast FC reached a 30.04% damaged issue rate during the injected spike window versus 0.95% for the same segment outside the spike window.
 
+## Tableau Dashboard Exports
+
+Run `python scripts/export_tableau_datasets.py` to create curated CSV exports in `dashboard/exports/` for Tableau dashboard building.
+
 ## Data Note
 
 Olist data will be used as the real source dataset. Warehouse, carrier, SLA, and issue fields will be synthetic additions created later for the fulfillment operations use case.
