@@ -79,6 +79,8 @@ Run `python scripts/detect_anomalies.py` to score weekly SLA-breach anomalies by
 
 The anomaly workflow now separates SLA-breach drift detection from damaged issue-rate spike detection, then validates each track against the appropriate known injected anomaly.
 
+Headline finding: Carrier B x Southeast FC reached a 30.04% damaged issue rate during the injected spike window versus 0.95% for the same segment outside the spike window.
+
 ## Data Note
 
 Olist data will be used as the real source dataset. Warehouse, carrier, SLA, and issue fields will be synthetic additions created later for the fulfillment operations use case.
