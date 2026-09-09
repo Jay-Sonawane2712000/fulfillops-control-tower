@@ -1,106 +1,155 @@
 # FulfillOps Control Tower
 
-## Problem Statement
+FulfillOps Control Tower is an end-to-end analytics engineering portfolio project for monitoring ecommerce fulfillment performance, SLA risk, carrier quality, and operational anomalies.
 
-FulfillOps Control Tower is a portfolio analytics project for monitoring ecommerce fulfillment performance across orders, warehouses, carriers, SLA status, and operational issues.
+## Business Problem
 
-## Planned Stack
+Fulfillment teams need a reliable way to see where delivery promises are being missed, which warehouse-carrier segments are driving exceptions, and whether emerging issue patterns deserve investigation. Raw order data alone does not usually contain the operational context needed for this kind of control tower, so this project layers a synthetic operations model on top of real ecommerce orders.
 
-- Python
-- DuckDB
-- SQL
-- dbt or SQL-based transforms
-- Tableau
-- Pytest
+## Why This Project Matters
 
-## Planned Folder Structure
+This project demonstrates a realistic analytics workflow: raw data validation, reproducible synthetic operations generation, DuckDB warehousing, dbt staging and marts, data-quality tests, anomaly validation, Tableau-ready exports, and dashboard documentation. It is designed to show the judgment needed for operational analytics: preserving data lineage, separating real signals from synthetic assumptions, and making findings interview-friendly without overstating them.
 
-```text
-fulfillops-control-tower/
-|-- raw/
-|   |-- olist/
-|   `-- synthetic/
-|-- transform/
-|-- warehouse/
-|-- dashboard/
-|-- tests/
-|-- docs/
-|-- scripts/
-|-- .gitignore
-|-- README.md
-`-- .env.example
+## Data Sources
+
+- Real source data: Brazilian E-Commerce Public Dataset by Olist.
+- Synthetic operational layer: warehouses, carriers, SLA targets, issue flags, and injected anomaly windows generated for this project.
+- Important distinction: Olist order, customer, product, review, seller, payment, and geolocation files are real public ecommerce data. Warehouse, carrier, SLA, issue, and anomaly fields are synthetic. The anomalies are injected validation events, not real Olist business incidents.
+
+## Architecture
+
+```mermaid
+flowchart LR
+    A[Real Olist CSVs] --> B[Raw Data Validation]
+    C[Synthetic Ops Config] --> D[Synthetic Ops Generator]
+    A --> D
+    D --> E[Generated Synthetic CSVs]
+    A --> F[DuckDB Bronze Load]
+    E --> F
+    F --> G[dbt Staging Models]
+    G --> H[dbt Gold Marts]
+    H --> I[Anomaly Detection]
+    I --> J[Findings Summary]
+    H --> K[Tableau CSV Exports]
+    K --> L[Tableau Dashboard]
 ```
 
-## Raw Data Setup
+## Data Model
 
-Place the real Olist CSV files in `raw/olist/` before running ingestion checks. Synthetic warehouse, carrier, SLA, and issue fields will be generated later and should remain separate from the real Olist source data.
+The DuckDB warehouse uses a bronze, staging, and gold structure.
 
-## Synthetic Operations Config
+- Bronze tables preserve raw field names from Olist and generated synthetic CSVs.
+- Staging models clean and join operational context into `stg_orders`, `stg_shipments`, and `stg_issues`.
+- Gold marts include `fct_shipments`, `dim_warehouse`, `dim_carrier`, `dim_category`, `dim_date`, `agg_daily_sla_performance`, and `agg_weekly_quality_by_segment`.
+- Tableau exports are written to `dashboard/exports/` from the gold marts.
 
-The files in `raw/synthetic/` define the planned synthetic operational layer: fulfillment centers, carriers, SLA targets, and known injected anomaly windows. These configs describe the synthetic layer only; order-level synthetic fields will be generated later on top of the real Olist source data.
+## KPIs
 
-Known injected anomalies include a Carrier B x Southeast FC damaged-issue spike and a gradual SLA breach drift for one warehouse.
+- Shipment count
+- SLA attainment %
+- SLA breach count
+- On-time delivery %
+- Average delay days
+- Quality issue rate %
+- Damaged issue rate
+- Flagged anomaly segment-weeks
 
-## Generated Synthetic Outputs
+## Anomaly Detection
 
-Run `python scripts/generate_synthetic_ops.py` after the real Olist CSVs and synthetic config files are present. The script creates order-level synthetic operational files in `raw/synthetic/generated/` for warehouse assignments, carrier assignments, issue flags, and SLA targets. These generated files augment real Olist orders without modifying the raw Olist source CSVs.
+The anomaly workflow scores weekly warehouse-carrier segment behavior with two detection tracks:
 
-## DuckDB Bronze Load
+- SLA breach-rate detection catches delivery and SLA drift using a trailing four-week baseline.
+- Damaged issue-rate detection catches quality spikes that may not affect delivery timing.
 
-Run `python scripts/load_bronze_duckdb.py` to create `warehouse/fulfillops.duckdb` and load the real Olist CSVs plus generated synthetic operational CSVs into bronze tables. This step preserves the raw CSV field names and does not create silver, gold, or dbt models yet.
+Both tracks use z-scores and minimum-volume rules, then compare detected segment-weeks against known injected anomaly labels only after scoring.
 
-## dbt Transform Setup
+## Key Finding
 
-Run dbt commands from `transform/` with the local profile:
+Carrier B x Southeast FC drove 88.76% of damaged issues during the injected spike window.
 
-```text
-dbt debug --profiles-dir .
-```
-
-The dbt project `fulfillops_transform` connects to `../warehouse/fulfillops.duckdb` and defines bronze sources for the real Olist and generated synthetic operational tables. Staging and mart folders are prepared, but silver and gold models are not created yet.
-
-## Day 2 Staging Models
-
-The first dbt staging models live in `transform/models/staging/`. `stg_orders` joins real Olist order and customer fields with synthetic warehouse and carrier assignments, `stg_shipments` calculates delivery and SLA fields, and `stg_issues` standardizes generated issue records. Real late-delivery signals remain separate from synthetic warehouse, carrier, SLA, and issue fields.
-
-Day 2 staging includes dbt tests for uniqueness, relationships, accepted values, and shipment date ordering.
-
-## Day 3 Gold Marts
-
-The first gold marts live in `transform/models/marts/` and include `fct_shipments` plus warehouse, carrier, category, and date dimensions for dashboarding.
-
-Aggregate marts provide dashboard-ready SLA performance by day and quality issue rates by weekly operational segment.
-
-Full Day 3 `dbt build --profiles-dir .` and `dbt docs generate --profiles-dir .` passed from `transform/`.
-
-## Day 4 Anomaly Detection
-
-Run `python scripts/detect_anomalies.py` to score weekly SLA-breach anomalies by warehouse-carrier segment and compare detected weeks against the known injected anomaly labels.
-
-The anomaly workflow now separates SLA-breach drift detection from damaged issue-rate spike detection, then validates each track against the appropriate known injected anomaly.
-
-Headline finding: Carrier B x Southeast FC reached a 30.04% damaged issue rate during the injected spike window versus 0.95% for the same segment outside the spike window.
-
-## Tableau Dashboard Exports
-
-Run `python scripts/export_tableau_datasets.py` to create curated CSV exports in `dashboard/exports/` for Tableau dashboard building.
-
-Tableau Public build instructions are documented in `dashboard/tableau_build_guide.md`.
+During that window, the segment had a 30.04% damaged issue rate, compared with 0.95% for the same segment outside the spike window. This is a synthetic operational anomaly layered on real Olist order volume, not a real Olist incident.
 
 ## Dashboard Screenshots
 
-- [Executive Summary](dashboard/screenshots/executive_summary.png)
-- [Ops Drill-down](dashboard/screenshots/ops_drilldown.png)
-- [Root-cause Anomaly View](dashboard/screenshots/root_cause_anomaly.png)
+### Executive Summary
 
-## Continuous Integration
+![Executive Summary](dashboard/screenshots/executive_summary.png)
 
-GitHub Actions runs Python dependency installation and the committed synthetic config check on push and pull request. Because raw Olist CSVs and DuckDB database files are intentionally not committed, the full local rebuild, dbt build, and anomaly validation steps run in CI only when the Kaggle Olist CSVs are present in `raw/olist/`; full local rebuilds require placing those Kaggle files there first.
+### Ops Drill-down
 
-## Snowflake Validation
+![Ops Drill-down](dashboard/screenshots/ops_drilldown.png)
 
-Snowflake validation setup is documented in `docs/snowflake_validation.md` and prepared with `transform/profiles_snowflake.yml.example`. DuckDB remains the local development warehouse; Snowflake validation is planned but not executed unless credentials and Snowflake objects are configured locally.
+### Root-cause Anomaly View
 
-## Data Note
+![Root-cause Anomaly View](dashboard/screenshots/root_cause_anomaly.png)
 
-Olist data will be used as the real source dataset. Warehouse, carrier, SLA, and issue fields will be synthetic additions created later for the fulfillment operations use case.
+## How To Run Locally
+
+Place the Olist CSV files in `raw/olist/`, then run:
+
+```text
+python scripts/validate_raw_olist.py
+python scripts/generate_synthetic_ops.py
+python scripts/load_bronze_duckdb.py
+cd transform
+dbt build --profiles-dir .
+cd ..
+python scripts/detect_anomalies.py
+python scripts/summarize_anomaly_findings.py
+python scripts/export_tableau_datasets.py
+```
+
+Open `dashboard/fulfillops_control_tower.twb` in Tableau and connect to the curated CSV exports in `dashboard/exports/`.
+
+## dbt Tests And CI
+
+The dbt project includes source, staging, mart, relationship, uniqueness, accepted-values, and custom date-ordering tests. A full local dbt build has passed with 47 total dbt steps.
+
+GitHub Actions CI is configured and passing for the committed checks. Because raw Olist CSVs and DuckDB database files are intentionally not committed, CI runs the full rebuild/dbt/anomaly path only when those raw Kaggle files are available in `raw/olist/`.
+
+## Snowflake Validation Status
+
+Snowflake validation is prepared and documented in `docs/snowflake_validation.md`, with a placeholder dbt profile at `transform/profiles_snowflake.yml.example`. DuckDB remains the local development warehouse. Snowflake validation has not been executed unless credentials and Snowflake objects are configured locally.
+
+## Limitations
+
+- The operational layer is synthetic and should be treated as a controlled analytics scenario, not a claim about Olist's real logistics operations.
+- Raw Olist CSVs are not committed because they are large source files.
+- `warehouse/fulfillops.duckdb` is generated locally and not committed.
+- The Tableau Public link is not included yet.
+- The SLA drift finding should be interpreted as a synthetic validation signal; the current generated start/end warehouse breach rates are nearly flat.
+- CI cannot fully rebuild the warehouse without the raw Olist files.
+
+## Repo Structure
+
+```text
+fulfillops-control-tower/
+|-- dashboard/
+|   |-- exports/
+|   |-- screenshots/
+|   |-- fulfillops_control_tower.twb
+|   |-- README.md
+|   `-- tableau_build_guide.md
+|-- docs/
+|   |-- anomaly_detection_notes.md
+|   |-- anomaly_findings.md
+|   |-- dbt_docs_notes.md
+|   `-- snowflake_validation.md
+|-- raw/
+|   |-- olist/
+|   `-- synthetic/
+|-- scripts/
+|-- transform/
+|   |-- models/
+|   |   |-- staging/
+|   |   `-- marts/
+|   |-- dbt_project.yml
+|   |-- profiles.yml
+|   `-- profiles_snowflake.yml.example
+|-- warehouse/
+|-- .github/workflows/ci.yml
+|-- .env.example
+|-- .gitignore
+|-- README.md
+`-- requirements.txt
+```
