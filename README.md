@@ -73,6 +73,10 @@ Aggregate marts provide dashboard-ready SLA performance by day and quality issue
 
 Full Day 3 `dbt build --profiles-dir .` and `dbt docs generate --profiles-dir .` passed from `transform/`.
 
+## Day 4 Anomaly Detection
+
+Run `python scripts/detect_anomalies.py` to score weekly SLA-breach anomalies by warehouse-carrier segment and compare detected weeks against the known injected anomaly labels.
+
 ## Data Note
 
 Olist data will be used as the real source dataset. Warehouse, carrier, SLA, and issue fields will be synthetic additions created later for the fulfillment operations use case.
