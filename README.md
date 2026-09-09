@@ -59,6 +59,10 @@ dbt debug --profiles-dir .
 
 The dbt project `fulfillops_transform` connects to `../warehouse/fulfillops.duckdb` and defines bronze sources for the real Olist and generated synthetic operational tables. Staging and mart folders are prepared, but silver and gold models are not created yet.
 
+## Day 2 Staging Models
+
+The first dbt staging models live in `transform/models/staging/`. `stg_orders` joins real Olist order and customer fields with synthetic warehouse and carrier assignments, `stg_shipments` calculates delivery and SLA fields, and `stg_issues` standardizes generated issue records. Real late-delivery signals remain separate from synthetic warehouse, carrier, SLA, and issue fields.
+
 ## Data Note
 
 Olist data will be used as the real source dataset. Warehouse, carrier, SLA, and issue fields will be synthetic additions created later for the fulfillment operations use case.

@@ -1,0 +1,45 @@
+version: 2
+
+models:
+  - name: stg_orders
+    description: Cleaned order-level staging model that joins real Olist order/customer fields with synthetic warehouse and carrier assignments.
+    columns:
+      - name: order_id
+        description: Unique Olist order identifier.
+        tests:
+          - not_null
+          - unique
+
+  - name: stg_shipments
+    description: Shipment staging model with delivery timing, SLA target, synthetic SLA breach flag, and real Olist late-delivery flag.
+    columns:
+      - name: shipment_id
+        description: Deterministic shipment identifier generated from order_id.
+        tests:
+          - not_null
+          - unique
+      - name: order_id
+        description: Olist order identifier.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_orders')
+                field: order_id
+
+  - name: stg_issues
+    description: Standardized synthetic issue records generated for the operational layer.
+    columns:
+      - name: issue_type
+        description: Synthetic issue category.
+        tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - none
+                  - missing
+                  - damaged
+                  - wrong
+                  - failed
+                  - cancelled
+                  - refund
