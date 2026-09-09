@@ -18,6 +18,7 @@ ENV/
 *.duckdb.wal
 *.db
 *.db.wal
+warehouse/anomaly_results.csv
 
 # Tableau packaged and temporary files
 *.twbx

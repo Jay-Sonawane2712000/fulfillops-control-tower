@@ -4,6 +4,7 @@ from pathlib import Path
 
 EXPECTED_ANOMALIES = {"ANOM_SPIKE_001", "ANOM_DRIFT_001"}
 REQUIRED_RESULT_COLUMNS = {
+    "detection_metric",
     "week_start_date",
     "warehouse_id",
     "warehouse_name",
@@ -11,19 +12,27 @@ REQUIRED_RESULT_COLUMNS = {
     "carrier_name",
     "shipment_count",
     "sla_breach_count",
+    "damaged_issue_count",
     "sla_breach_rate",
+    "damaged_issue_rate",
     "trailing_4_week_mean",
     "trailing_4_week_std",
     "z_score",
     "anomaly_detected",
+    "known_anomaly_count",
     "known_anomaly_labels",
 }
 REQUIRED_SUMMARY_COLUMNS = {
     "anomaly_id",
+    "validation_metric",
     "detected",
     "first_detected_week",
     "flagged_segment_weeks",
     "top_flagged_segments",
+}
+EXPECTED_VALIDATION_METRICS = {
+    "ANOM_SPIKE_001": "damaged_issue_rate",
+    "ANOM_DRIFT_001": "sla_breach_rate",
 }
 
 
@@ -76,6 +85,19 @@ def main() -> int:
                 + ", ".join(sorted(missing_anomalies))
             )
 
+        summary_by_anomaly = {row["anomaly_id"]: row for row in summary_rows}
+        for anomaly_id, metric in EXPECTED_VALIDATION_METRICS.items():
+            row = summary_by_anomaly.get(anomaly_id)
+            if not row:
+                continue
+            if row["validation_metric"] != metric:
+                failures.append(
+                    f"{anomaly_id}: expected validation_metric {metric}, "
+                    f"found {row['validation_metric']}"
+                )
+            if row["detected"] != "yes":
+                failures.append(f"{anomaly_id}: expected detected=yes")
+
     if failures:
         print("\nFAIL: Anomaly detection outputs are not ready.")
         print("\nIssues:")
@@ -94,7 +116,8 @@ def main() -> int:
     for row in summary_rows:
         first_week = row["first_detected_week"] or "not detected"
         print(
-            f"- {row['anomaly_id']}: detected={row['detected']}, "
+            f"- {row['anomaly_id']} via {row['validation_metric']}: "
+            f"detected={row['detected']}, "
             f"first_detected_week={first_week}, "
             f"flagged_segment_weeks={row['flagged_segment_weeks']}"
         )
