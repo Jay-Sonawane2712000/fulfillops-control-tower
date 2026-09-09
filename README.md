@@ -63,6 +63,8 @@ The dbt project `fulfillops_transform` connects to `../warehouse/fulfillops.duck
 
 The first dbt staging models live in `transform/models/staging/`. `stg_orders` joins real Olist order and customer fields with synthetic warehouse and carrier assignments, `stg_shipments` calculates delivery and SLA fields, and `stg_issues` standardizes generated issue records. Real late-delivery signals remain separate from synthetic warehouse, carrier, SLA, and issue fields.
 
+Day 2 staging includes dbt tests for uniqueness, relationships, accepted values, and shipment date ordering.
+
 ## Data Note
 
 Olist data will be used as the real source dataset. Warehouse, carrier, SLA, and issue fields will be synthetic additions created later for the fulfillment operations use case.

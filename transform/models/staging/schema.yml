@@ -26,6 +26,20 @@ models:
               arguments:
                 to: ref('stg_orders')
                 field: order_id
+      - name: warehouse_id
+        description: Synthetic warehouse identifier assigned to the shipment.
+        tests:
+          - relationships:
+              arguments:
+                to: source('bronze', 'raw_warehouse_assignments')
+                field: warehouse_id
+      - name: carrier_id
+        description: Synthetic carrier identifier assigned to the shipment.
+        tests:
+          - relationships:
+              arguments:
+                to: source('bronze', 'raw_carrier_assignments')
+                field: carrier_id
 
   - name: stg_issues
     description: Standardized synthetic issue records generated for the operational layer.
