@@ -1,0 +1,68 @@
+version: 2
+
+models:
+  - name: fct_shipments
+    description: Gold shipment fact table at one row per shipment/order for fulfillment performance analytics.
+    columns:
+      - name: shipment_id
+        description: Deterministic shipment identifier generated from order_id.
+        tests:
+          - not_null
+          - unique
+      - name: warehouse_id
+        description: Synthetic warehouse identifier.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_warehouse')
+                field: warehouse_id
+      - name: carrier_id
+        description: Synthetic carrier identifier.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_carrier')
+                field: carrier_id
+      - name: category_name
+        description: Product category assigned to the order for SLA analysis.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_category')
+                field: category_name
+
+  - name: dim_warehouse
+    description: Warehouse dimension for synthetic fulfillment centers.
+    columns:
+      - name: warehouse_id
+        description: Warehouse primary key.
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_carrier
+    description: Carrier dimension for synthetic carrier assignments.
+    columns:
+      - name: carrier_id
+        description: Carrier primary key.
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_category
+    description: Category dimension with synthetic SLA tier and target-days mapping.
+    columns:
+      - name: category_name
+        description: Product category primary key.
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_date
+    description: Date dimension covering the shipment purchase-date range.
+    columns:
+      - name: date_day
+        description: Calendar date primary key.
+        tests:
+          - not_null
+          - unique

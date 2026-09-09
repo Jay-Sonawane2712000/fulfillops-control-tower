@@ -65,6 +65,10 @@ The first dbt staging models live in `transform/models/staging/`. `stg_orders` j
 
 Day 2 staging includes dbt tests for uniqueness, relationships, accepted values, and shipment date ordering.
 
+## Day 3 Gold Marts
+
+The first gold marts live in `transform/models/marts/` and include `fct_shipments` plus warehouse, carrier, category, and date dimensions for dashboarding. These models keep one row per shipment/order in the fact table and do not add aggregate tables yet.
+
 ## Data Note
 
 Olist data will be used as the real source dataset. Warehouse, carrier, SLA, and issue fields will be synthetic additions created later for the fulfillment operations use case.
