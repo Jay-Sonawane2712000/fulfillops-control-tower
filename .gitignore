@@ -20,10 +20,11 @@ ENV/
 *.db.wal
 warehouse/anomaly_results.csv
 
-# Tableau packaged and temporary files
-*.twbx
+# Tableau extract and temporary files
 *.hyper
 ~$*.twb
+dashboard/*.twbr
+dashboard/~*.twb*
 *.tmp
 
 # dbt generated artifacts
