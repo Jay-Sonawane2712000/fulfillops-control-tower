@@ -2,6 +2,8 @@
 
 The CSV files in `dashboard/exports/` are curated Tableau inputs generated from DuckDB marts.
 
+Use `dashboard/tableau_build_guide.md` for the exact Tableau Public dashboard structure, calculated fields, filters, and suggested screenshots.
+
 ## Export Files
 
 - `fct_shipments_dashboard.csv`: shipment-level fact export for drill-down analysis, SLA flags, quality issue flags, and anomaly labels.

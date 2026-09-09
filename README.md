@@ -85,6 +85,8 @@ Headline finding: Carrier B x Southeast FC reached a 30.04% damaged issue rate d
 
 Run `python scripts/export_tableau_datasets.py` to create curated CSV exports in `dashboard/exports/` for Tableau dashboard building.
 
+Tableau Public build instructions are documented in `dashboard/tableau_build_guide.md`.
+
 ## Data Note
 
 Olist data will be used as the real source dataset. Warehouse, carrier, SLA, and issue fields will be synthetic additions created later for the fulfillment operations use case.
