@@ -16,6 +16,8 @@ This project demonstrates a realistic analytics workflow: raw data validation, r
 - Synthetic operational layer: warehouses, carriers, SLA targets, issue flags, and injected anomaly windows generated for this project.
 - Important distinction: Olist order, customer, product, review, seller, payment, and geolocation files are real public ecommerce data. Warehouse, carrier, SLA, issue, and anomaly fields are synthetic. The anomalies are injected validation events, not real Olist business incidents.
 
+All carrier, warehouse, SLA, and issue-rate findings should therefore be interpreted as controlled scenario results.
+
 ## Architecture
 
 ```mermaid
