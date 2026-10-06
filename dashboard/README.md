@@ -23,4 +23,4 @@ python scripts/export_tableau_datasets.py
 
 - Executive Summary
 - Ops Drill-down
-- Root-cause/Anomaly View
+- Root Cause and Anomaly View
